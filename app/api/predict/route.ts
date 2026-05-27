@@ -58,7 +58,7 @@ async function getSummary(raceName: string, predictions: unknown[]) {
   return JSON.parse(clean);
 }
 
-export async function POST(req) {
+export async function POST(req: Request) {
   try {
     const { raceName } = await req.json();
     if (!raceName || typeof raceName !== "string" || raceName.trim().length === 0) {
