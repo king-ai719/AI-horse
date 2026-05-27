@@ -29,11 +29,11 @@ const AI_PERSONAS = [
   },
 ];
 
-function buildPrompt(raceName, persona) {
+function buildPrompt(raceName: string, persona: typeof AI_PERSONAS[0]) {
   return persona.personality + "\n\n以下のレースについて予想を行ってください。\nレース名: " + raceName + "\n\n以下の点に必ず従ってください：\n- 「絶対」「確実」「間違いない」などの断定表現は使用禁止\n- 利益・的中を保証する表現は禁止\n- 理由は3行以内\n- 信頼度は50〜85の範囲で設定\n\n必ず以下のJSON形式のみで回答してください（他のテキスト不要）:\n{\n  \"ai_name\": \"" + persona.ai_name + "\",\n  \"icon\": \"" + persona.icon + "\",\n  \"color\": \"" + persona.color + "\",\n  \"focus\": \"" + persona.focus + "\",\n  \"main\": \"本命馬名\",\n  \"second\": \"対抗馬名\",\n  \"confidence\": 数値,\n  \"reason\": \"予想理由（3行以内）\",\n  \"comment\": \"一言コメント\"\n}";
 }
 
-async function getOnePrediction(raceName, persona) {
+async function getOnePrediction(raceName: string, persona: typeof AI_PERSONAS[0]) {
   const message = await client.messages.create({
     model: "claude-sonnet-4-5",
     max_tokens: 500,
@@ -44,7 +44,7 @@ async function getOnePrediction(raceName, persona) {
   return JSON.parse(clean);
 }
 
-async function getSummary(raceName, predictions) {
+async function getSummary(raceName: string, predictions: unknown[]) {
   const message = await client.messages.create({
     model: "claude-sonnet-4-5",
     max_tokens: 600,
