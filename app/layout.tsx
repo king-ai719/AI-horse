@@ -1,11 +1,11 @@
-import type { Metadata } from "next";
+ï»¿import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { jaJP } from "@clerk/localizations";
 import "../styles/globals.css";
 
 export const metadata: Metadata = {
-  title: "AI”nŒ”‰ï‹c",
-  description: "3l‚ÌAI—\‘z‰®‚ª‹£”nƒŒ[ƒX‚ğƒŠƒAƒ‹ƒ^ƒCƒ€“¢˜_",
+  title: "AIé¦¬åˆ¸ä¼šè­°",
+  description: "AIäºˆæƒ³ã‚¢ãƒ—ãƒª",
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
