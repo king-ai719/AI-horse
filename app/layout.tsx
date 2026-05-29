@@ -1,86 +1,66 @@
-﻿import type { Metadata, Viewport } from "next";
-import "../styles/globals.css";
-import { ClerkProvider } from "@clerk/nextjs";
+﻿"use client";
 
-export const metadata: Metadata = {
-  title: "AI馬券会議 | 3人のAI予想屋が競馬を討論",
-  description: "3人のAI予想屋が異なる視点でレースを討論。データ派・展開派・穴馬派がリアルタイムで予想。",
-};
+import { SignUp } from "@clerk/nextjs";
 
-export const viewport: Viewport = {
-  themeColor: "#080B12",
-};
-
-const jaLocalization = {
-  locale: "ja-JP",
-  signIn: {
-    start: {
-      title: "ログイン",
-      subtitle: "AI馬券会議へようこそ",
-      actionText: "アカウントをお持ちでない方は",
-      actionLink: "新規登録",
-    },
-    emailCode: {
-      title: "確認コードを入力",
-      subtitle: "メールアドレスに送信されたコードを入力してください",
-      formTitle: "確認コード",
-      formSubtitle: "メールに届いたコードを入力",
-      resendButton: "コードを再送信",
-    },
-    password: {
-      title: "パスワードを入力",
-      actionLink: "別の方法でログイン",
-    },
-  },
-  signUp: {
-    start: {
-      title: "新規登録",
-      subtitle: "アカウントを作成して3ptゲット",
-      actionText: "すでにアカウントをお持ちの方は",
-      actionLink: "ログイン",
-    },
-    emailCode: {
-      title: "メールアドレスを確認",
-      subtitle: "確認コードをメールに送信しました",
-      formTitle: "確認コード",
-      formSubtitle: "メールに届いたコードを入力してください",
-      resendButton: "コードを再送信",
-    },
-    continue: {
-      title: "情報を入力",
-      subtitle: "残りの情報を入力してください",
-      actionText: "すでにアカウントをお持ちの方は",
-      actionLink: "ログイン",
-    },
-  },
-  userButton: {
-    action__manageAccount: "アカウント管理",
-    action__signOut: "ログアウト",
-    action__signOutAll: "全デバイスからログアウト",
-    action__addAccount: "アカウントを追加",
-  },
-  formFieldLabel__emailAddress: "メールアドレス",
-  formFieldLabel__password: "パスワード",
-  formFieldLabel__firstName: "名",
-  formFieldLabel__lastName: "姓",
-  formFieldInputPlaceholder__emailAddress: "メールアドレスを入力",
-  formFieldInputPlaceholder__password: "パスワードを入力",
-  formButtonPrimary: "続ける",
-  socialButtonsBlockButton: "{{provider}}で続ける",
-  dividerText: "または",
-  footerActionLink__useAnotherMethod: "別の方法でログイン",
-};
-
-export default function RootLayout({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
+export default function SignUpPage() {
   return (
-    <ClerkProvider localization={jaLocalization}>
-      <html lang="ja" className="dark">
-        <body>{children}</body>
-      </html>
-    </ClerkProvider>
+    <main className="min-h-screen flex flex-col items-center justify-center px-4 relative overflow-hidden">
+      <div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          backgroundImage:
+            "linear-gradient(rgba(0,229,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(0,229,255,0.03) 1px, transparent 1px)",
+          backgroundSize: "40px 40px",
+        }}
+      />
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none"
+        style={{ background: "radial-gradient(circle, rgba(255,45,45,0.05) 0%, transparent 70%)" }}
+      />
+      <div className="relative z-10 text-center mb-8">
+        <h1
+          className="font-display font-black text-3xl mb-2"
+          style={{
+            background: "linear-gradient(135deg, #FFFFFF 0%, rgba(0,229,255,0.8) 100%)",
+            WebkitBackgroundClip: "text",
+            WebkitTextFillColor: "transparent",
+          }}
+        >
+          AI馬券会議
+        </h1>
+        <p className="text-xs" style={{ color: "rgba(232,234,240,0.4)" }}>
+          登録で3ポイント無料プレゼント🎁
+        </p>
+      </div>
+      <div className="relative z-10">
+        <SignUp
+          appearance={{
+            variables: {
+              colorPrimary: "#00E5FF",
+              colorBackground: "#0D1320",
+              colorText: "#E8EAF0",
+              colorTextSecondary: "rgba(232,234,240,0.6)",
+              colorInputBackground: "#111827",
+              colorInputText: "#E8EAF0",
+              borderRadius: "8px",
+            },
+            elements: {
+              card: "shadow-none border border-[rgba(26,37,64,0.8)] bg-[#0D1320]",
+              headerTitle: "hidden",
+              headerSubtitle: "hidden",
+              socialButtonsBlockButton:
+                "border border-[rgba(0,229,255,0.2)] bg-[rgba(0,229,255,0.05)] text-[#E8EAF0] hover:bg-[rgba(0,229,255,0.1)]",
+              formButtonPrimary:
+                "bg-gradient-to-r from-[#00E5FF] to-[#0099BB] text-[#080B12] font-bold hover:opacity-90",
+              footerActionLink: "text-[#00E5FF]",
+            },
+          }}
+          routing="path"
+          path="/sign-up"
+          signInUrl="/sign-in"
+          fallbackRedirectUrl="/"
+        />
+      </div>
+    </main>
   );
 }

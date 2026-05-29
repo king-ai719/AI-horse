@@ -12,6 +12,7 @@ export default function HomePage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [points, setPoints] = useState<number | null>(null);
+  const [nextGrantIn, setNextGrantIn] = useState<{ hours: number; minutes: number } | null>(null)
   const [checkingOut, setCheckingOut] = useState(false);
 
   useEffect(() => {
@@ -27,12 +28,13 @@ export default function HomePage() {
   }, []);
 
   const fetchPoints = async () => {
-    const res = await fetch("/api/points");
-    if (res.ok) {
-      const data = await res.json();
-      setPoints(data.points);
-    }
-  };
+  const res = await fetch("/api/points")
+  if (res.ok) {
+    const data = await res.json()
+    setPoints(data.points)
+    setNextGrantIn(data.nextGrantIn)
+  }
+}
 
   const handleSubmit = async () => {
     const trimmed = raceName.trim();
@@ -140,7 +142,11 @@ export default function HomePage() {
                 <span className="text-xs" style={{ color: "rgba(232,234,240,0.4)" }}>pt 残</span>
               </div>
             </div>
-
+{nextGrantIn !== null && (
+  <p className="text-xs text-right mt-1 px-1" style={{ color: "rgba(232,234,240,0.35)" }}>
+    次回回復まで {nextGrantIn.hours}時間{nextGrantIn.minutes}分
+  </p>
+)}
             <div className="ai-card p-6 mb-4">
               <label className="block text-xs font-display tracking-widest mb-3 uppercase" style={{ color: "var(--race-cyan)" }}>Race Info</label>
               <input className="race-input mb-4" type="text" placeholder="例: 東京11R、日本ダービー、有馬記念..." value={raceName} onChange={(e) => setRaceName(e.target.value)} onKeyDown={handleKeyDown} disabled={loading || points === 0} maxLength={50} />

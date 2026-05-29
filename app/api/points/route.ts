@@ -9,27 +9,45 @@ export async function GET() {
   const supabase = createServerSupabase()
   let { data, error } = await supabase
     .from('horse_users')
-    .select('points')
+    .select('points, last_granted_at')
     .eq('clerk_id', userId)
     .single()
 
-  // ユーザーがいなければ自動作成（初回ログイン時）
   if (error || !data) {
+    const now = new Date().toISOString()
     const { data: newUser, error: insertError } = await supabase
       .from('horse_users')
-      .insert({
-        clerk_id: userId,
-        points: 3,
-        used_free_points: true,
-      })
-      .select('points')
+      .insert({ clerk_id: userId, points: 3, used_free_points: true, last_granted_at: now })
+      .select('points, last_granted_at')
       .single()
 
     if (insertError) return NextResponse.json({ error: 'Failed to create user' }, { status: 500 })
-    return NextResponse.json({ points: newUser.points })
+    data = newUser
   }
 
-  return NextResponse.json({ points: data.points })
+  // 24時間経過していたら3pt付与
+  const lastGranted = new Date(data.last_granted_at)
+  const now = new Date()
+  const diffMs = now.getTime() - lastGranted.getTime()
+  const diffHours = diffMs / (1000 * 60 * 60)
+
+  if (diffHours >= 24) {
+    const { data: updated } = await supabase
+      .from('horse_users')
+      .update({ points: data.points + 3, last_granted_at: now.toISOString(), updated_at: now.toISOString() })
+      .eq('clerk_id', userId)
+      .select('points, last_granted_at')
+      .single()
+    data = updated!
+  }
+
+  // 次回回復までの残り時間
+  const nextGrantAt = new Date(new Date(data.last_granted_at).getTime() + 24 * 60 * 60 * 1000)
+  const remainMs = Math.max(0, nextGrantAt.getTime() - now.getTime())
+  const remainHours = Math.floor(remainMs / (1000 * 60 * 60))
+  const remainMinutes = Math.floor((remainMs % (1000 * 60 * 60)) / (1000 * 60))
+
+  return NextResponse.json({ points: data.points, nextGrantIn: { hours: remainHours, minutes: remainMinutes } })
 }
 
 export async function POST() {
