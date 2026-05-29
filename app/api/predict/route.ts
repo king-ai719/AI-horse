@@ -29,16 +29,20 @@ const AI_PERSONAS = [
   },
 ];
 
-function buildPrompt(raceName: string, persona: typeof AI_PERSONAS[0]) {
-  return persona.personality + "\n\n以下のレースについて予想を行ってください。\nレース名: " + raceName + "\n\n以下の点に必ず従ってください：\n- 「絶対」「確実」「間違いない」などの断定表現は使用禁止\n- 利益・的中を保証する表現は禁止\n- 理由は3行以内\n- 信頼度は50〜85の範囲で設定\n\n必ず以下のJSON形式のみで回答してください（他のテキスト不要）:\n{\n  \"ai_name\": \"" + persona.ai_name + "\",\n  \"icon\": \"" + persona.icon + "\",\n  \"color\": \"" + persona.color + "\",\n  \"focus\": \"" + persona.focus + "\",\n  \"main\": \"本命馬名\",\n  \"second\": \"対抗馬名\",\n  \"confidence\": 数値,\n  \"reason\": \"予想理由（3行以内）\",\n  \"comment\": \"一言コメント\"\n}";
+function buildPrompt(raceName: string, persona: typeof AI_PERSONAS[0], confidenceRange: string) {
+  return persona.personality + "\n\n以下のレースについて予想を行ってください。\nレース名: " + raceName + "\n\n以下の点に必ず従ってください：\n- 「絶対」「確実」「間違いない」などの断定表現は使用禁止\n- 利益・的中を保証する表現は禁止\n- 理由は3行以内\n- 信頼度は" + confidenceRange + "の範囲で設定（必ずこの範囲内の整数）\n\n必ず以下のJSON形式のみで回答してください（他のテキスト不要）:\n{\n  \"ai_name\": \"" + persona.ai_name + "\",\n  \"icon\": \"" + persona.icon + "\",\n  \"color\": \"" + persona.color + "\",\n  \"focus\": \"" + persona.focus + "\",\n  \"main\": \"本命馬名\",\n  \"second\": \"対抗馬名\",\n  \"confidence\": 数値,\n  \"reason\": \"予想理由（3行以内）\",\n  \"comment\": \"一言コメント\"\n}";
 }
 
-async function getOnePrediction(raceName: string, persona: typeof AI_PERSONAS[0]) {
+async function getOnePrediction(raceName: string, persona: typeof AI_PERSONAS[0], confidenceRange: string) {
   const message = await client.messages.create({
     model: "claude-sonnet-4-5",
     max_tokens: 500,
-    messages: [{ role: "user", content: buildPrompt(raceName, persona) }],
+    messages: [{ role: "user", content: buildPrompt(raceName, persona, confidenceRange) }],
   });
+  const text = message.content.filter((b) => b.type === "text").map((b) => b.text).join("");
+  const clean = text.replace(/```json|```/g, "").trim();
+  return JSON.parse(clean);
+}
   const text = message.content.filter((b) => b.type === "text").map((b) => b.text).join("");
   const clean = text.replace(/```json|```/g, "").trim();
   return JSON.parse(clean);
@@ -68,10 +72,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "APIキーが設定されていません" }, { status: 500 });
     }
     const [p1, p2, p3] = await Promise.all([
-      getOnePrediction(raceName.trim(), AI_PERSONAS[0]),
-      getOnePrediction(raceName.trim(), AI_PERSONAS[1]),
-      getOnePrediction(raceName.trim(), AI_PERSONAS[2]),
-    ]);
+  getOnePrediction(raceName.trim(), AI_PERSONAS[0], "65〜85"),
+  getOnePrediction(raceName.trim(), AI_PERSONAS[1], "55〜75"),
+  getOnePrediction(raceName.trim(), AI_PERSONAS[2], "50〜70"),
+]);
     const predictions = [p1, p2, p3];
     const summary = await getSummary(raceName.trim(), predictions);
     return NextResponse.json({
