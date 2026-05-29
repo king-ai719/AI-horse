@@ -19,7 +19,7 @@ export async function POST(req: Request) {
   }
 
   if (event.type === 'checkout.session.completed') {
-    const session = event.data.object as Stripe.CheckoutSession
+    const session = event.data.object as Stripe.Checkout.Session
     const clerk_id = session.metadata?.clerk_id
     if (!clerk_id) return new Response('No clerk_id', { status: 400 })
 
