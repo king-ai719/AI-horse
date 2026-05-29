@@ -35,7 +35,6 @@ export default function SignUpPage() {
       </div>
       <div className="relative z-10">
         <SignUp
-          localization={jaJP}
           appearance={{
             variables: {
               colorPrimary: "#00E5FF",
