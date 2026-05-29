@@ -1,5 +1,4 @@
-﻿@'
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import { ClerkProvider } from "@clerk/nextjs";
 import { jaJP } from "@clerk/localizations";
 import "./globals.css";
@@ -18,4 +17,3 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </ClerkProvider>
   );
 }
-'@ | Set-Content app/layout.tsx
