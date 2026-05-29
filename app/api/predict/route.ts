@@ -1,9 +1,7 @@
-﻿import { NextRequest, NextResponse } from "next/server";
+﻿import { NextResponse } from "next/server";
 import Anthropic from "@anthropic-ai/sdk";
 
-const client = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
+const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
 
 const AI_PERSONAS = [
   {
@@ -43,10 +41,6 @@ async function getOnePrediction(raceName: string, persona: typeof AI_PERSONAS[0]
   const clean = text.replace(/```json|```/g, "").trim();
   return JSON.parse(clean);
 }
-  const text = message.content.filter((b) => b.type === "text").map((b) => b.text).join("");
-  const clean = text.replace(/```json|```/g, "").trim();
-  return JSON.parse(clean);
-}
 
 async function getSummary(raceName: string, predictions: unknown[]) {
   const message = await client.messages.create({
@@ -72,10 +66,10 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "APIキーが設定されていません" }, { status: 500 });
     }
     const [p1, p2, p3] = await Promise.all([
-  getOnePrediction(raceName.trim(), AI_PERSONAS[0], "65〜85"),
-  getOnePrediction(raceName.trim(), AI_PERSONAS[1], "55〜75"),
-  getOnePrediction(raceName.trim(), AI_PERSONAS[2], "50〜70"),
-]);
+      getOnePrediction(raceName.trim(), AI_PERSONAS[0], "65〜85"),
+      getOnePrediction(raceName.trim(), AI_PERSONAS[1], "55〜75"),
+      getOnePrediction(raceName.trim(), AI_PERSONAS[2], "50〜70"),
+    ]);
     const predictions = [p1, p2, p3];
     const summary = await getSummary(raceName.trim(), predictions);
     return NextResponse.json({
