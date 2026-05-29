@@ -1,4 +1,4 @@
-﻿import type { Metadata } from "next";
+﻿import "../styles/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { jaJP } from "@clerk/localizations";
 import "./globals.css";
