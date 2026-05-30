@@ -31,7 +31,7 @@ export async function GET() {
   const diffMs = now.getTime() - lastGranted.getTime()
   const diffHours = diffMs / (1000 * 60 * 60)
 
-  if (diffHours >= 24) {
+  if (diffHours >= 24 && data.points < 3) {
     const { data: updated } = await supabase
       .from('horse_users')
       .update({ points: data.points + 3, last_granted_at: now.toISOString(), updated_at: now.toISOString() })
