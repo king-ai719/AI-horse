@@ -14,6 +14,7 @@ interface Prediction {
   focus: string;
   main: string;
   second: string;
+  third: string;
   confidence: number;
   reason: string;
   comment: string;
