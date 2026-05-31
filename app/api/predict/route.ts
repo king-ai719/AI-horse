@@ -28,17 +28,18 @@ const AI_PERSONAS = [
 ];
 
 async function fetchRaceInfo(raceName: string): Promise<string> {
-  const message = await client.messages.create({
+  const searchResult = await client.messages.create({
     model: "claude-sonnet-4-5",
-    max_tokens: 300,
+    max_tokens: 200,
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
+    system: "出走馬名・騎手名・当日の天候・馬場状態のみを簡潔に列挙。それ以外は一切不要。",
     messages: [{
       role: "user",
-      content: `「${raceName}」の出走馬名のみを番号付きリストで列挙。騎手名不要。`,
+      content: `「${raceName}」出走馬と騎手と当日天候と馬場状態`,
     }],
   });
 
-  const text = message.content
+  const text = searchResult.content
     .filter((b) => b.type === "text")
     .map((b) => (b as { type: "text"; text: string }).text)
     .join("");
