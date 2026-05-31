@@ -30,11 +30,11 @@ const AI_PERSONAS = [
 async function fetchRaceInfo(raceName: string): Promise<string> {
   const searchResult = await client.messages.create({
     model: "claude-sonnet-4-5",
-    max_tokens: 200,
+    max_tokens: 300,
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
     messages: [{
       role: "user",
-      content: `「${raceName}」の出走馬名と騎手名のみ箇条書きで列挙。`,
+      content: `netkeiba ${raceName} 出走馬 2026 の出走馬名と人気順を箇条書きで。`,
     }],
   });
 
