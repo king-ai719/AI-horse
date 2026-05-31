@@ -28,22 +28,22 @@ const AI_PERSONAS = [
 ];
 
 async function fetchRaceInfo(raceName: string): Promise<string> {
-  const searchResult = await client.messages.create({
+  const message = await client.messages.create({
     model: "claude-sonnet-4-5",
-    max_tokens: 300,
+    max_tokens: 400,
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
     messages: [{
       role: "user",
-      content: `netkeiba ${raceName} 出走馬 2026 の出走馬名と人気順を箇条書きで。`,
+      content: `site:netkeiba.com "${raceName}" 2026 出走馬`,
     }],
   });
 
-  const text = searchResult.content
+  const text = message.content
     .filter((b) => b.type === "text")
     .map((b) => (b as { type: "text"; text: string }).text)
     .join("");
 
-  return text.slice(0, 300);
+  return text.slice(0, 400);
 }
 
 function buildPrompt(raceName: string, raceInfo: string, persona: typeof AI_PERSONAS[0], confidenceRange: string, exclude: string) {
