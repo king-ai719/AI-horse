@@ -34,7 +34,7 @@ async function fetchRaceInfo(raceName: string): Promise<string> {
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
     messages: [{
       role: "user",
-      content: `「${raceName}」の出走馬名・騎手・天候・馬場状態のみ箇条書きで。余計な説明不要。`,
+      content: `「${raceName}」の出走馬名・騎手・天候・馬場状態の出走馬を人気順に番号付きで列挙。人気順位のみ。`,
     }],
   });
 
