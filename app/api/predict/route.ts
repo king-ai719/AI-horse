@@ -29,12 +29,12 @@ const AI_PERSONAS = [
 
 async function fetchRaceInfo(raceName: string): Promise<string> {
   const message = await client.messages.create({
-    model: "claude-sonnet-4-5",
-    max_tokens: 500,
+    model: "claude-haiku-4-5-20251001",
+    max_tokens: 300,
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
     messages: [{
       role: "user",
-      content: `「${raceName}」の出走馬名と騎手を箇条書きで簡潔に列挙してください。`,
+      content: `「${raceName}」の出走馬名のみを番号付きリストで列挙。騎手名不要。`,
     }],
   });
 
@@ -43,7 +43,7 @@ async function fetchRaceInfo(raceName: string): Promise<string> {
     .map((b) => (b as { type: "text"; text: string }).text)
     .join("");
 
-  return text.slice(0, 500);
+  return text.slice(0, 300);
 }
 
 function buildPrompt(raceName: string, raceInfo: string, persona: typeof AI_PERSONAS[0], confidenceRange: string) {
