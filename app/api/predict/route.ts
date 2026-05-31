@@ -92,8 +92,6 @@ export async function POST(req: Request) {
     }
 
     // まず出走馬情報を取得
-const raceInfo = await fetchRaceInfo(raceName.trim());
-const trimmedRaceInfo = raceInfo.slice(0, 500);
 
     // 3人同時に予想
     const raceInfo = await fetchRaceInfo(raceName.trim());
