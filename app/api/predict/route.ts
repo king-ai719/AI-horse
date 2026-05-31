@@ -30,18 +30,20 @@ const AI_PERSONAS = [
 async function fetchRaceInfo(raceName: string): Promise<string> {
   const message = await client.messages.create({
     model: "claude-sonnet-4-5",
-    max_tokens: 1000,
+    max_tokens: 500,
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
     messages: [{
       role: "user",
-      content: `「${raceName}」の出走馬リスト、騎手、枠番、オッズ（人気順）を検索して日本語でまとめてください。`,
+      content: `「${raceName}」の出走馬名と騎手を箇条書きで簡潔に列挙してください。`,
     }],
   });
 
-  return message.content
+  const text = message.content
     .filter((b) => b.type === "text")
     .map((b) => (b as { type: "text"; text: string }).text)
     .join("");
+
+  return text.slice(0, 500);
 }
 
 function buildPrompt(raceName: string, raceInfo: string, persona: typeof AI_PERSONAS[0], confidenceRange: string) {
@@ -91,7 +93,7 @@ export async function POST(req: Request) {
 
     // まず出走馬情報を取得
 const raceInfo = await fetchRaceInfo(raceName.trim());
-const trimmedRaceInfo = raceInfo.slice(0, 1500); // トークン節約
+const trimmedRaceInfo = raceInfo.slice(0, 500);
 
     // 3人同時に予想
     const p1 = await getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[0], "65〜85");
