@@ -27,23 +27,40 @@ const AI_PERSONAS = [
   },
 ];
 
-function buildPrompt(raceName: string, persona: typeof AI_PERSONAS[0], confidenceRange: string) {
+async function fetchRaceInfo(raceName: string): Promise<string> {
+  const message = await client.messages.create({
+    model: "claude-sonnet-4-5",
+    max_tokens: 1000,
+    tools: [{ type: "web_search_20250305", name: "web_search" } as never],
+    messages: [{
+      role: "user",
+      content: `「${raceName}」の出走馬リスト、騎手、枠番、オッズ（人気順）を検索して日本語でまとめてください。`,
+    }],
+  });
+
+  return message.content
+    .filter((b) => b.type === "text")
+    .map((b) => (b as { type: "text"; text: string }).text)
+    .join("");
+}
+
+function buildPrompt(raceName: string, raceInfo: string, persona: typeof AI_PERSONAS[0], confidenceRange: string) {
   const differentiation = persona.ai_name === "穴馬AI"
-    ? "- 必ず人気薄（5番人気以下想定）の馬を本命に選ぶこと\n- 上位人気馬を本命にすることは禁止\n"
+    ? "- 必ず人気薄（5番人気以下）の馬を本命に選ぶこと\n- 上位人気馬を本命にすることは禁止\n"
     : persona.ai_name === "展開予想AI"
     ? "- データ分析AIとは異なる馬を本命に選ぶこと\n- 展開面で恵まれる馬を重視すること\n"
     : "- 実績・安定性重視で最も信頼できる馬を本命に選ぶこと\n";
 
-  return persona.personality + "\n\n以下のレースについて予想を行ってください。\nレース名: " + raceName + "\n\n以下の点に必ず従ってください：\n- 「絶対」「確実」「間違いない」などの断定表現は使用禁止\n- 利益・的中を保証する表現は禁止\n- 理由は3行以内\n- 信頼度は" + confidenceRange + "の範囲で設定（必ずこの範囲内の整数）\n" + differentiation + "\n必ず以下のJSON形式のみで回答してください（他のテキスト不要）:\n{\n  \"ai_name\": \"" + persona.ai_name + "\",\n  \"icon\": \"" + persona.icon + "\",\n  \"color\": \"" + persona.color + "\",\n  \"focus\": \"" + persona.focus + "\",\n  \"main\": \"本命馬名\",\n  \"second\": \"対抗馬名\",\n  \"third\": \"単穴馬名\",\n  \"confidence\": 数値,\n  \"reason\": \"予想理由（3行以内）\",\n  \"comment\": \"一言コメント\"\n}";
+  return persona.personality + "\n\n以下のレース情報をもとに予想してください。\nレース名: " + raceName + "\n\n【出走馬情報】\n" + raceInfo + "\n\n以下の点に必ず従ってください：\n- 必ず上記の出走馬リストの中から馬を選ぶこと\n- 「絶対」「確実」「間違いない」などの断定表現は使用禁止\n- 利益・的中を保証する表現は禁止\n- 理由は3行以内\n- 信頼度は" + confidenceRange + "の範囲で設定（必ずこの範囲内の整数）\n" + differentiation + "\n必ず以下のJSON形式のみで回答してください（他のテキスト不要）:\n{\n  \"ai_name\": \"" + persona.ai_name + "\",\n  \"icon\": \"" + persona.icon + "\",\n  \"color\": \"" + persona.color + "\",\n  \"focus\": \"" + persona.focus + "\",\n  \"main\": \"本命馬名\",\n  \"second\": \"対抗馬名\",\n  \"third\": \"単穴馬名\",\n  \"confidence\": 数値,\n  \"reason\": \"予想理由（3行以内）\",\n  \"comment\": \"一言コメント\"\n}";
 }
 
-async function getOnePrediction(raceName: string, persona: typeof AI_PERSONAS[0], confidenceRange: string) {
+async function getOnePrediction(raceName: string, raceInfo: string, persona: typeof AI_PERSONAS[0], confidenceRange: string) {
   const message = await client.messages.create({
     model: "claude-sonnet-4-5",
     max_tokens: 500,
-    messages: [{ role: "user", content: buildPrompt(raceName, persona, confidenceRange) }],
+    messages: [{ role: "user", content: buildPrompt(raceName, raceInfo, persona, confidenceRange) }],
   });
-  const text = message.content.filter((b) => b.type === "text").map((b) => b.text).join("");
+  const text = message.content.filter((b) => b.type === "text").map((b) => (b as { type: "text"; text: string }).text).join("");
   const clean = text.replace(/```json|```/g, "").trim();
   return JSON.parse(clean);
 }
@@ -57,7 +74,7 @@ async function getSummary(raceName: string, predictions: unknown[]) {
       content: "以下は「" + raceName + "」についての3人のAI予想屋の意見です。\n\n" + JSON.stringify(predictions, null, 2) + "\n\nあなたは会議の司会者AIです。3人の意見をまとめてください。断定・保証表現禁止。\n\n必ず以下のJSON形式のみで回答:\n{\n  \"majority_pick\": \"多数決の本命馬名\",\n  \"key_point\": \"注目ポイント（1〜2行）\",\n  \"conclusion\": \"総合結論（2〜3行）\",\n  \"final_comment\": \"締めコメント\",\n  \"agreement_level\": \"意見一致度の説明\"\n}"
     }],
   });
-  const text = message.content.filter((b) => b.type === "text").map((b) => b.text).join("");
+  const text = message.content.filter((b) => b.type === "text").map((b) => (b as { type: "text"; text: string }).text).join("");
   const clean = text.replace(/```json|```/g, "").trim();
   return JSON.parse(clean);
 }
@@ -66,18 +83,25 @@ export async function POST(req: Request) {
   try {
     const { raceName } = await req.json();
     if (!raceName || typeof raceName !== "string" || raceName.trim().length === 0) {
-      return NextResponse.json({ error: "レース名が入力されていません" }, { status: 400 });
+      return NextResponse.json({ error: "レース名を入力してください" }, { status: 400 });
     }
     if (!process.env.ANTHROPIC_API_KEY) {
       return NextResponse.json({ error: "APIキーが設定されていません" }, { status: 500 });
     }
+
+    // まず出走馬情報を取得
+    const raceInfo = await fetchRaceInfo(raceName.trim());
+
+    // 3人同時に予想
     const [p1, p2, p3] = await Promise.all([
-      getOnePrediction(raceName.trim(), AI_PERSONAS[0], "65〜85"),
-      getOnePrediction(raceName.trim(), AI_PERSONAS[1], "55〜75"),
-      getOnePrediction(raceName.trim(), AI_PERSONAS[2], "50〜70"),
+      getOnePrediction(raceName.trim(), raceInfo, AI_PERSONAS[0], "65〜85"),
+      getOnePrediction(raceName.trim(), raceInfo, AI_PERSONAS[1], "55〜75"),
+      getOnePrediction(raceName.trim(), raceInfo, AI_PERSONAS[2], "50〜70"),
     ]);
+
     const predictions = [p1, p2, p3];
     const summary = await getSummary(raceName.trim(), predictions);
+
     return NextResponse.json({
       race_name: raceName.trim(),
       predictions,
