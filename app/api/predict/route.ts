@@ -97,7 +97,9 @@ const trimmedRaceInfo = raceInfo.slice(0, 500);
 
     // 3人同時に予想
     const p1 = await getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[0], "75〜90");
+await new Promise(r => setTimeout(r, 3000));
 const p2 = await getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[1], "55〜70");
+await new Promise(r => setTimeout(r, 3000));
 const p3 = await getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[2], "40〜60");
 
     const predictions = [p1, p2, p3];
