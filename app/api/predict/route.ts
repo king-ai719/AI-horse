@@ -45,7 +45,6 @@ async function fetchRaceInfo(raceName: string): Promise<string> {
 
   return text.slice(0, 300);
 }
-}
 
 function buildPrompt(raceName: string, raceInfo: string, persona: typeof AI_PERSONAS[0], confidenceRange: string) {
   const differentiation = persona.ai_name === "穴馬AI"
