@@ -34,7 +34,7 @@ async function fetchRaceInfo(raceName: string): Promise<string> {
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
     messages: [{
       role: "user",
-      content: `「${raceName}」の出走馬名と騎手を人気順に番号付きで列挙、天候と馬場状態も追加。馬名・騎手名・天候・馬場のみ。`,
+      content: `「${raceName}」の出走馬名と騎手名のみ箇条書きで列挙。`,
     }],
   });
 
@@ -51,7 +51,7 @@ function buildPrompt(raceName: string, raceInfo: string, persona: typeof AI_PERS
     ? "- 必ず10番人気以下の馬を本命に選ぶこと\n- 上位人気馬を本命にすることは絶対禁止\n"
     : persona.ai_name === "展開予想AI"
     ? "- 必ず5〜10番人気の中穴馬を本命に選ぶこと\n- 1〜4番人気馬を本命にすることは禁止\n"
-    : "- 必ず1〜3番人気の馬を本命に選ぶこと\n- 人気薄を本命にすることは禁止\n";
+    : "- 必ず1〜3番人気の馬を本命に選ぶこと\n- 人気薄を本命にすることは禁止\n- 当日の天候・馬場状態も考慮すること\n";
 
   return persona.personality + "\n\nレース名: " + raceName + "\n\n【出走馬情報】\n" + raceInfo + "\n\n以下の点に必ず従ってください：\n- 必ず上記の出走馬リストの中から馬を選ぶこと\n- 「絶対」「確実」「間違いない」などの断定表現は使用禁止\n- 利益・的中を保証する表現は禁止\n- 理由は3行以内\n- 信頼度は" + confidenceRange + "の範囲で設定\n" + differentiation + exclude + "\n必ず以下のJSON形式のみで回答してください（他のテキスト不要）:\n{\n  \"ai_name\": \"" + persona.ai_name + "\",\n  \"icon\": \"" + persona.icon + "\",\n  \"color\": \"" + persona.color + "\",\n  \"focus\": \"" + persona.focus + "\",\n  \"main\": \"本命馬名\",\n  \"second\": \"対抗馬名\",\n  \"third\": \"単穴馬名\",\n  \"confidence\": 数値,\n  \"reason\": \"予想理由（3行以内）\",\n  \"comment\": \"一言コメント\"\n}";
 }
