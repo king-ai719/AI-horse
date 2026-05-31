@@ -29,7 +29,7 @@ const AI_PERSONAS = [
 
 async function fetchRaceInfo(raceName: string): Promise<string> {
   const message = await client.messages.create({
-    model: "claude-haiku-4-5-20251001",
+    model: "claude-sonnet-4-5",
     max_tokens: 300,
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
     messages: [{
