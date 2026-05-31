@@ -32,10 +32,9 @@ async function fetchRaceInfo(raceName: string): Promise<string> {
     model: "claude-sonnet-4-5",
     max_tokens: 200,
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
-    system: "出走馬名・騎手名・当日の天候・馬場状態のみを簡潔に列挙。それ以外は一切不要。",
     messages: [{
       role: "user",
-      content: `「${raceName}」出走馬と騎手と当日天候と馬場状態`,
+      content: `「${raceName}」の出走馬名・騎手・天候・馬場状態のみ箇条書きで。余計な説明不要。`,
     }],
   });
 
@@ -45,6 +44,7 @@ async function fetchRaceInfo(raceName: string): Promise<string> {
     .join("");
 
   return text.slice(0, 300);
+}
 }
 
 function buildPrompt(raceName: string, raceInfo: string, persona: typeof AI_PERSONAS[0], confidenceRange: string) {
