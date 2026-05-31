@@ -110,8 +110,7 @@ const p3 = await getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[
       predictions,
       summary,
       generated_at: new Date().toISOString(),
-      debug_raceInfo: trimmedRaceInfo,
-    });
+       });
   } catch (err) {
     console.error("Predict API error:", err);
     return NextResponse.json({ error: err instanceof Error ? err.message : "Unknown error" }, { status: 500 });
