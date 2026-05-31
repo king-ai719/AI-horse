@@ -94,11 +94,9 @@ const raceInfo = await fetchRaceInfo(raceName.trim());
 const trimmedRaceInfo = raceInfo.slice(0, 1500); // トークン節約
 
     // 3人同時に予想
-    const [p1, p2, p3] = await Promise.all([
-  getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[0], "65〜85"),
-  getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[1], "55〜75"),
-  getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[2], "50〜70"),
-]);
+    const p1 = await getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[0], "65〜85");
+const p2 = await getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[1], "55〜75");
+const p3 = await getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[2], "50〜70");
 
     const predictions = [p1, p2, p3];
     const summary = await getSummary(raceName.trim(), predictions);
