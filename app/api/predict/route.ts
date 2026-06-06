@@ -42,7 +42,7 @@ async function fetchRaceInfo(raceName: string): Promise<string> {
     .filter((b) => b.type === "text")
     .map((b) => (b as { type: "text"; text: string }).text)
     .join("");
-
+console.log("raceInfo:", text.slice(0, 600));
   return text.slice(0, 600);
 }
 
