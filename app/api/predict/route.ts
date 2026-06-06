@@ -43,7 +43,7 @@ async function fetchRaceInfo(raceName: string): Promise<string> {
     .map((b) => (b as { type: "text"; text: string }).text)
     .join("");
 console.log("raceInfo:", text.slice(0, 600));
-  return text.slice(0, 600);
+  return text.slice(0, 1200);
 }
 
 function buildPrompt(raceName: string, raceInfo: string, persona: typeof AI_PERSONAS[0], confidenceRange: string, exclude: string) {
@@ -95,7 +95,7 @@ export async function POST(req: Request) {
 
     // 3人同時に予想
     const raceInfo = await fetchRaceInfo(raceName.trim());
-const trimmedRaceInfo = raceInfo.slice(0, 600);
+const trimmedRaceInfo = raceInfo.slice(0, 1200);
 
 const p1 = await getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[0], "75〜90", "");
 await new Promise(r => setTimeout(r, 2000));
