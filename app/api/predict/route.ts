@@ -30,11 +30,11 @@ const AI_PERSONAS = [
 async function fetchRaceInfo(raceName: string): Promise<string> {
   const message = await client.messages.create({
     model: "claude-sonnet-4-5",
-    max_tokens: 400,
+    max_tokens: 800,
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
     messages: [{
       role: "user",
-      content: `site:netkeiba.com "${raceName}" 2026 出走馬`,
+      content: `「${raceName}」2026年の出走馬全頭リスト、枠番、騎手、オッズ、前走を調べてください。netkeiba または JRA公式の情報を参照してください。`,
     }],
   });
 
@@ -43,7 +43,7 @@ async function fetchRaceInfo(raceName: string): Promise<string> {
     .map((b) => (b as { type: "text"; text: string }).text)
     .join("");
 
-  return text.slice(0, 400);
+  return text.slice(0, 600);
 }
 
 function buildPrompt(raceName: string, raceInfo: string, persona: typeof AI_PERSONAS[0], confidenceRange: string, exclude: string) {
@@ -95,7 +95,7 @@ export async function POST(req: Request) {
 
     // 3人同時に予想
     const raceInfo = await fetchRaceInfo(raceName.trim());
-const trimmedRaceInfo = raceInfo.slice(0, 300);
+const trimmedRaceInfo = raceInfo.slice(0, 600);
 
 const p1 = await getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[0], "75〜90", "");
 await new Promise(r => setTimeout(r, 2000));
