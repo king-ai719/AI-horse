@@ -149,7 +149,8 @@ export default function HomePage() {
 )}
             <div className="ai-card p-6 mb-4">
               <label className="block text-xs font-display tracking-widest mb-3 uppercase" style={{ color: "var(--race-cyan)" }}>Race Info</label>
-              <input className="race-input mb-4" type="text" placeholder="例: 東京11R、日本ダービー、有馬記念..." value={raceName} onChange={(e) => setRaceName(e.target.value)} onKeyDown={handleKeyDown} disabled={loading || points === 0} maxLength={50} />
+              <input className="race-input mb-2" type="text" placeholder="例: 東京11R、日本ダービー、有馬記念..." value={raceName} onChange={(e) => setRaceName(e.target.value)} onKeyDown={handleKeyDown} disabled={loading || points === 0} maxLength={50} />
+              <p className="text-xs mb-3" style={{ color: "rgba(232,234,240,0.3)" }}>※ G1・G2・G3以外は情報が不完全な場合があります</p>
               {error && <p className="text-xs mb-4 px-3 py-2 rounded" style={{ color: "var(--race-red)", background: "rgba(255,45,45,0.1)", border: "1px solid rgba(255,45,45,0.2)" }}>⚠ {error}</p>}
 
               {points === null || points > 0 ? (
