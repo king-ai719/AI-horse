@@ -1,7 +1,6 @@
 ﻿"use client";
 
 import { SignUp } from "@clerk/nextjs";
-import { jaJP } from "@clerk/localizations";
 
 export default function SignUpPage() {
   return (
@@ -35,7 +34,6 @@ export default function SignUpPage() {
       </div>
       <div className="relative z-10">
         <SignUp
-          localization={jaJP}
           appearance={{
             variables: {
               colorPrimary: "#00E5FF",
