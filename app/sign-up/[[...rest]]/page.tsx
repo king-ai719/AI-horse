@@ -35,6 +35,7 @@ export default function SignUpPage() {
       </div>
       <div className="relative z-10">
         <SignUp
+          localization={jaJP}
           appearance={{
             variables: {
               colorPrimary: "#00E5FF",
@@ -45,9 +46,6 @@ export default function SignUpPage() {
               colorInputText: "#E8EAF0",
               borderRadius: "8px",
             },
-            <SignUp
-          localization={jaJP}
-          appearance={{
             elements: {
               card: "shadow-none border border-[rgba(26,37,64,0.8)] bg-[#0D1320]",
               headerTitle: "hidden",
