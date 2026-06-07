@@ -104,7 +104,21 @@ await new Promise(r => setTimeout(r, 2000));
 const p3 = await getOnePrediction(raceName.trim(), trimmedRaceInfo, AI_PERSONAS[2], "40〜60", `※「${p1.main}」「${p2.main}」は既に他のAIが本命にしているので選ばないこと。\n`);
     const predictions = [p1, p2, p3];
     const summary = await getSummary(raceName.trim(), predictions);
-
+// Supabaseに保存
+const { createClient } = await import("@supabase/supabase-js");
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.SUPABASE_SERVICE_ROLE_KEY!
+);
+const { userId } = await import("@clerk/nextjs/server").then(m => m.auth());
+if (userId) {
+  await supabase.from("race_predictions").insert({
+    clerk_id: userId,
+    race_name: raceName.trim(),
+    predictions,
+    summary,
+  });
+}
     return NextResponse.json({
       race_name: raceName.trim(),
       predictions,
