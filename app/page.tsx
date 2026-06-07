@@ -88,9 +88,16 @@ export default function HomePage() {
       <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: gridBg, backgroundSize: "40px 40px" }} />
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] rounded-full pointer-events-none" style={{ background: "radial-gradient(circle, rgba(255,45,45,0.05) 0%, transparent 70%)" }} />
 
-      <div className="absolute top-4 right-4 z-20">
+      <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
         {isSignedIn ? (
-          <UserButton afterSignOutUrl="/" />
+          <>
+            <Link href="/mypage">
+              <button className="text-xs px-3 py-1.5 rounded-full" style={{ background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.3)", color: "var(--race-cyan)" }}>
+                履歴
+              </button>
+            </Link>
+            <UserButton afterSignOutUrl="/" />
+          </>
         ) : (
           <Link href="/sign-in">
             <button className="text-xs px-3 py-1.5 rounded-full" style={{ background: "rgba(0,229,255,0.1)", border: "1px solid rgba(0,229,255,0.3)", color: "var(--race-cyan)" }}>

@@ -177,6 +177,13 @@ export default function ResultPage() {
         <SummaryCard summary={data.summary} predictions={data.predictions} />
       </div>
 
+{/* 履歴リンク */}
+<div className="mt-6 text-center">
+  <Link href="/mypage" className="text-xs" style={{ color: "var(--race-cyan)" }}>
+    📋 予想履歴を見る
+  </Link>
+</div>
+
       {/* LINE導線 */}
       <div className="mt-8">
         <LineCta />
