@@ -34,7 +34,7 @@ export async function GET() {
   if (diffHours >= 24 && data.points < 3) {
     const { data: updated } = await supabase
       .from('horse_users')
-      .update({ points: data.points + 3, last_granted_at: now.toISOString(), updated_at: now.toISOString() })
+      .update({ points: Math.min(data.points + 3, 3), last_granted_at: now.toISOString(), updated_at: now.toISOString() })
       .eq('clerk_id', userId)
       .select('points, last_granted_at')
       .single()
