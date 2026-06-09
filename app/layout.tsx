@@ -13,6 +13,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <ClerkProvider localization={jaJP}>
       <html lang="ja">
         <head>
+          <meta name="google-site-verification" content="F3XHfXpe09RHh5-ajvHkXX6iFyx9gjcse1IuCIeIgR4" />
           <script async src="https://www.googletagmanager.com/gtag/js?id=G-LODN4SPQFC"></script>
           <script dangerouslySetInnerHTML={{ __html: `
             window.dataLayer = window.dataLayer || [];
