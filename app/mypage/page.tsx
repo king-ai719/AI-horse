@@ -39,6 +39,13 @@ export default function MyPage() {
     setLoading(false);
   };
 
+  const deleteHistory = async (id: string) => {
+    const res = await fetch(`/api/mypage?id=${id}`, { method: "DELETE" });
+    if (res.ok) {
+      setHistory((prev) => prev.filter((item) => item.id !== id));
+    }
+  };
+
   return (
     <main className="min-h-screen px-4 py-8 max-w-lg mx-auto">
       <div className="mb-8">
@@ -57,8 +64,15 @@ export default function MyPage() {
       ) : (
         <div className="flex flex-col gap-4">
           {history.map((item) => (
-            <div key={item.id} className="rounded-xl p-4" style={{ background: "rgba(13,19,32,0.8)", border: "1px solid rgba(26,37,64,0.8)" }}>
-              <div className="flex justify-between items-start mb-3">
+            <div key={item.id} className="rounded-xl p-4 relative" style={{ background: "rgba(13,19,32,0.8)", border: "1px solid rgba(26,37,64,0.8)" }}>
+              <button
+                onClick={() => deleteHistory(item.id)}
+                className="absolute top-3 right-3 text-xs transition-opacity hover:opacity-70"
+                style={{ color: "rgba(232,234,240,0.3)" }}
+              >
+                ✕
+              </button>
+              <div className="flex justify-between items-start mb-3 pr-6">
                 <p className="font-display font-bold text-base text-white">{item.race_name}</p>
                 <p className="text-xs" style={{ color: "rgba(232,234,240,0.4)" }}>
                   {new Date(item.created_at).toLocaleDateString("ja-JP")}
