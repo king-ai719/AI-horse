@@ -30,16 +30,11 @@ const AI_PERSONAS = [
 async function fetchRaceInfo(raceName: string): Promise<string> {
   const message = await client.messages.create({
     model: "claude-sonnet-4-5",
-    max_tokens: 1200,
+    max_tokens: 800,
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
     messages: [{
       role: "user",
-      content: `「${raceName}」2026年の最新情報をnetkeibaまたはJRA公式で調べて、以下の形式で全頭リストアップしてください。
-
-【出走馬一覧】
-馬番 馬名 騎手 人気 オッズ 前走着順
-
-人気順・オッズは必ず含めること。全頭記載すること。`,
+      content: `「${raceName}」2026年の出走馬全頭リスト、枠番、騎手、オッズ、前走を調べてください。netkeiba または JRA公式の情報を参照してください。`,
     }],
   });
 
