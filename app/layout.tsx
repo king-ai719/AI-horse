@@ -18,7 +18,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </head>
         <body>
           <Script
-            src="https://www.googletagmanager.com/gtag/js?id=G-LODN4SPQFC"
+            src="https://www.googletagmanager.com/gtag/js?id=G-L0DN4SPQFC"
             strategy="afterInteractive"
           />
           <Script id="ga4" strategy="afterInteractive">
