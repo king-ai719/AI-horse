@@ -34,7 +34,7 @@ async function fetchRaceInfo(raceName: string): Promise<string> {
     tools: [{ type: "web_search_20250305", name: "web_search" } as never],
     messages: [{
       role: "user",
-      content: `「${raceName}」2026年の出走馬全頭リスト、枠番、騎手、オッズ、前走を調べてください。netkeiba または JRA公式の情報を参照してください。`,
+      content: `「${raceName}」の確定出馬表（枠番・騎手・オッズ確定済み）を調べてください。登録段階の情報（枠番未確定）は使わないでください。まだ確定出馬表が発表されていない場合は、その旨を明記してください。netkeiba または JRA公式の情報を参照してください。`,
     }],
   });
 
